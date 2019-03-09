@@ -1,0 +1,199 @@
+{{!-- Setup the index.handlebars to have the template that Handlebars can render onto.
+
+
+Create a button in index.handlebars that will submit the user input into the database. --}}
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col text-center">
+            <img id="welcomeImg" src="assets/img/burger.gif" class="pb-3">
+            <h1>Eat-Da-Burger!</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <h3>MOUTH</h3>
+            <ul>
+                {{#each burgersData}}
+                {{#unless devoured}}
+                <div class="newburger-container">
+                    <button class="devourBurger" data-id={{this.id}}> <i class="fas fa-utensils"></i> Devour
+                        it!</button>
+                    {{this.burger_name}} <i class="fas fa-hamburger pl-1"></i> Owned by: {{this.SequelizeOwner.owner_name}}
+                </div>
+                {{/unless}}
+                {{/each}}
+            </ul>
+        </div>
+        <div class="col-6">
+            <h3>BELLY
+                {{!-- <button class="ml-2" style="background-color: gray; box-shadow: 0 5px rgba(0, 0, 0, 0.5);
+    "><i class="fas fa-trash"></i></button> --}}
+            </h3>
+            {{#each burgersData}}
+            {{#if devoured}}
+            <div class="devouredburger-container">{{this.id}}. {{this.burger_name}}</div>
+            {{/if}}
+            {{/each}}
+        </div>
+
+    </div>
+    <div class="row mt-4">
+        <div class="col-3"></div>
+        <div class="col-6 text-center">
+            <form id="newOwner">
+                <label for="owner_name">Create Owner:</label>
+                <input placeholder="Enter your name" id="owner_name" type="text" />
+                <button type="submit">Create A New Owner</button>
+            </form>
+            <form id="newBurger">
+                <div class="form-group">
+                    <label for="owner_name">Select Owner:</label>
+                    <select class="custom-select" id="owner_select">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="burgerInput">Burger type:</label>
+                    <textarea class="form-control pt-3 pl-3 pb-3" id="burgerInput" rows="1"
+                        placeholder="Enter a burger you want and click button below!"></textarea>
+                </div>
+                <div>
+                    <button type="submit">Make A New Burger!</button>
+                </div>
+                <div class="col-3"></div>
+            </form>
+        </div>
+    </div>
+    <div class="row mt-5"></div>
+
+
+
+    <script type="text/javascript">
+        //==========================Form Preparation=========================
+        $(document).ready(function () {
+            getAuthors();
+
+            // A function to get Authors and then render our list of Authors
+            function getAuthors() {
+                $.get("/owners", renderOwnerList);
+            }
+            // Function to either render a list of authors, or if there are none, direct the user to the page
+            // to create an author first
+            function renderOwnerList(data) {
+                console.log(data)
+                //if (!data.length) {
+                //window.location.href = "/authors";
+                //}
+                //$(".hidden").removeClass("hidden");
+                var rowsToAdd = [];
+                for (var i = 0; i < data.length; i++) {
+                    rowsToAdd.push(createOwnerRow(data[i]));
+                }
+                var ownerSelect = $("#owner_select");
+                ownerSelect.empty();
+                console.log(rowsToAdd);
+                console.log(ownerSelect);
+                ownerSelect.append(rowsToAdd);
+                //ownerSelect.val(authorId);
+            }
+
+
+            // Creates the author options in the dropdown
+            function createOwnerRow(owners) {
+                var listOption = $("<option>");
+                listOption.attr("value", owners.id);
+                listOption.text(owners.owner_name);
+                return listOption;
+            }
+
+            //==========================clickhandlers=========================
+            //devour burger button
+            $(".devourBurger").on("click", function (event) {
+                console.log("devour it clicked")
+                event.preventDefault();
+                // get the id of the burger
+                var id = $(this).data("id");
+                console.log("The click grab the id " + id)
+                //send the PUT request to trigger the mysql UPDATE query
+                $.ajax("/api/burger/" + id, {
+                    type: "PUT"
+                }).then(
+                    function () {
+                        console.log("devour the burge with id:  ", id);
+                        // Reload the page to get the updated list
+                        location.reload();
+                    }
+                );
+            })
+
+            // submit button for new owner
+            $("#newOwner").on("submit", function (event) {
+                event.preventDefault();
+                var owner_name = $("#owner_name").val().trim()
+                // Don't do anything if the name fields hasn't been filled out
+                if (!owner_name) {
+                    return;
+                }
+                var ownerRequestBody = {
+                    owner_name: owner_name
+                }
+                // send the POST request to owners model 
+                $.ajax("/api/owner", {
+                    type: "POST",
+                    data: ownerRequestBody
+                }).then(
+                    function () {
+                        console.log("a new owner was created!");
+                        // Reload the page to get the updated list
+                        location.reload();
+                        //send the POST request to burgers model trigger the mysql INSERT query
+                    }
+                );
+
+
+            })
+            function handleAuthorFormSubmit(event) {
+                // Don't do anything if the name fields hasn't been filled out
+                if (!nameInput.val().trim().trim()) {
+                    return;
+                }
+                // Calling the upsertAuthor function and passing in the value of the name input
+                upsertAuthor({
+                    name: nameInput
+                        .val()
+                        .trim()
+                });
+            }
+            // submit button for new burger
+            $("#newBurger").on("submit", function (event) {
+                // console.log("making a new burger!")
+                event.preventDefault();
+                //get the input from textareas
+                var burger_name = $("#burgerInput").val().trim()
+                var SequelizeOwnerId = $("#owner_select").val()
+                // Wont submit the post if we are missing a body, title, or author
+
+                if (!burger_name || !SequelizeOwnerId) {
+                    return;
+                }
+                // format the input as object 
+                var burgerRequestBody = {
+                    burger_name: burger_name,
+                    SequelizeOwnerId: SequelizeOwnerId
+                }
+                console.log(burgerRequestBody)
+                //send the POST request to owners model trigger the mysql INSERT query
+                $.ajax("/api/burger", {
+                    type: "POST",
+                    data: burgerRequestBody
+                }).then(
+                    function () {
+                        console.log("a new burger was made!");
+                        // Reload the page to get the updated list
+                        location.reload();
+                    }
+                );
+            })
+        })
+
+    </script>

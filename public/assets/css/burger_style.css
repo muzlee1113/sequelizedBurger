@@ -1,0 +1,69 @@
+body {
+    background-color: #FFCDD3
+}
+
+h1{
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 56pt;
+    color: #FF3366;
+}
+
+h3{
+    font-family: 'Fredoka One', cursive;
+    font-size: 26pt;
+    text-align: center;
+    margin-bottom: 0.5em;
+}
+
+.newburger-container{
+    display: block;
+    background-color: rgb(255, 255, 255, 0.5);
+    border: 2px solid white;
+    border-radius: 50px 50px 10px 10px;
+    padding: 22px 25px 20px 25px;
+    margin-bottom: 1em;
+    margin-left: 2em;
+    margin-right: 2em;
+    font-family: 'Raleway', sans-serif;
+    font-weight: bold;
+}
+
+.devouredburger-container{
+    display: block;
+    background-color: rgb(0, 0, 0, 0.3);
+    border: 2px solid white;
+    border-radius: 10px 10px 10px 10px;
+    padding: 10px 25px 8px 25px;
+    margin-bottom: 0.5em;
+    margin-left: 2em;
+    margin-right: 2em;
+    font-family: 'Raleway', sans-serif;
+    font-weight: bold;
+    color: #6C585A;
+}
+
+button {
+    font-size: 12pt;
+    padding: 5px 16px 3px 16px;
+    background-color: #FF3366;
+    font-family: 'Raleway', sans-serif;
+    text-align: center;
+    color: beige;
+    font-weight: bolder;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 5px rgba(255, 51, 102, 0.5);
+    cursor: pointer;
+    margin-right: 0.5em;
+}
+
+button:hover {
+    background-color: #993365;
+}
+
+button:active {
+    background-color: #993365;
+    box-shadow: 0 0px rgba(255, 51, 102, 0.5);
+    transform: translateY(3px);
+  }
+
