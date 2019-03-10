@@ -29,7 +29,7 @@ Create a button in index.handlebars that will submit the user input into the dat
             <h3><i class="fas fa-trash"></i> Trash Bin</h3>
             {{#each burgersData}}
             {{#if devoured}}
-            <div class="devouredburger-container">{{this.burger_name}} Owned by: <a href="/api/owner/{{this.SequelizeOwnerId}}">{{this.SequelizeOwner.owner_name}}</a></div>
+            <div class="devouredburger-container">{{this.burger_name}} | Owned by: <a href="/api/owner/{{this.SequelizeOwnerId}}">{{this.SequelizeOwner.owner_name}} <i class="fas fa-link"></i></a></a></div>
             {{/if}}
             {{/each}}
         </div>
