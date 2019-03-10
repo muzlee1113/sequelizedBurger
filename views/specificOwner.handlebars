@@ -1,0 +1,113 @@
+<div class="container">
+    <div class="row mb-3">
+        <div class="col text-center">
+            <img id="welcomeImg" src="/assets/img/burger.gif" class="pb-3">
+            <h1>Eat-Da-Burger!</h1>
+            <a href="/"><button><i class="fas fa-home"></i></button></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <h3 id="specificOwner" data-owner_id={{ownerData.id}}> <i class="fas fa-utensils"></i> {{ownerData.owner_name}}'s Table</h3>
+            <ul>
+                {{#each ownerData.SequelizeBurgers}}
+                {{#unless devoured}}
+                <div class="newburger-container">
+                    <button class="devourBurger" data-id={{this.id}}> <i class="fas fa-utensils"></i> Devour
+                        it!</button>
+                    {{this.burger_name}} <i class="fas fa-hamburger pl-1"></i>
+                </div>
+                {{/unless}}
+                {{/each}}
+            </ul>
+        </div>
+        <div class="col-6">
+            <h3 id="specificOwner" data-owner_id={{ownerData.id}}> <i class="fas fa-utensils"></i> {{ownerData.owner_name}}'s Trash Bin</h3>
+            {{#each ownerData.SequelizeBurgers}}
+            {{#if devoured}}
+            <div class="devouredburger-container">{{this.burger_name}}</div>
+            {{/if}}
+            {{/each}}
+        </div>
+
+    </div>
+    <div class="row mt-4">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <div class="p-5" id="checkout">
+                <h3 class="text-center"><i class="fas fa-dollar-sign"></i> Checkout Counter</h3>
+                <form id="newBurger" class="mt-4">
+                    <div class="form-group">
+                        <label for="burgerInput">Burger type:</label>
+                        <textarea class="form-control pt-3 pl-3 pb-3" id="burgerInput" rows="1"
+                            placeholder="Enter a burger you want and click button below!"></textarea>
+                    </div>
+                    <div>
+                        <button class="btn-block" type="submit">Order A Burger for {{ownerData.owner_name}}!</button>
+                    </div>
+                    <div class="col-3"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5"></div>
+
+
+
+    <script type="text/javascript">
+        //==========================Form Preparation=========================
+        $(document).ready(function () {
+
+            //==========================clickhandlers=========================
+            //devour burger button
+            $(".devourBurger").on("click", function (event) {
+                console.log("devour it clicked")
+                event.preventDefault();
+                // get the id of the burger
+                var id = $(this).data("id");
+                console.log("The click grab the id " + id)
+                //send the PUT request to trigger the mysql UPDATE query
+                $.ajax("/api/burger/" + id, {
+                    type: "PUT"
+                }).then(
+                    function () {
+                        console.log("devour the burge with id:  ", id);
+                        // Reload the page to get the updated list
+                        location.reload();
+                    }
+                );
+            })
+
+            // submit button for new burger
+            $("#newBurger").on("submit", function (event) {
+                // console.log("making a new burger!")
+                event.preventDefault();
+                //get the input from textareas
+                var burger_name = $("#burgerInput").val().trim()
+                var SequelizeOwnerId = $("#specificOwner").data("owner_id")
+                // Wont submit the post if we are missing a body, title, or author
+
+                if (!burger_name || !SequelizeOwnerId) {
+                    return;
+                }
+                // format the input as object 
+                var burgerRequestBody = {
+                    burger_name: burger_name,
+                    SequelizeOwnerId: SequelizeOwnerId
+                }
+                console.log(burgerRequestBody)
+                //send the POST request to owners model trigger the mysql INSERT query
+                $.ajax("/api/burger", {
+                    type: "POST",
+                    data: burgerRequestBody
+                }).then(
+                    function () {
+                        console.log("a new burger was made!");
+                        // Reload the page to get the updated list
+                        location.reload();
+                    }
+                );
+            })
+        })
+
+    </script>

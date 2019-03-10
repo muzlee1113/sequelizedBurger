@@ -12,27 +12,24 @@ Create a button in index.handlebars that will submit the user input into the dat
     </div>
     <div class="row">
         <div class="col-6">
-            <h3>MOUTH</h3>
+            <h3><i class="fas fa-utensils"></i> Tables</h3>
             <ul>
                 {{#each burgersData}}
                 {{#unless devoured}}
                 <div class="newburger-container">
                     <button class="devourBurger" data-id={{this.id}}> <i class="fas fa-utensils"></i> Devour
                         it!</button>
-                    {{this.burger_name}} <i class="fas fa-hamburger pl-1"></i> Owned by: {{this.SequelizeOwner.owner_name}}
+                    {{this.burger_name}} <i class="fas fa-hamburger pl-1"></i> Owned by: <a href="/api/owner/{{this.SequelizeOwnerId}}">{{this.SequelizeOwner.owner_name}}</a>
                 </div>
                 {{/unless}}
                 {{/each}}
             </ul>
         </div>
         <div class="col-6">
-            <h3>BELLY
-                {{!-- <button class="ml-2" style="background-color: gray; box-shadow: 0 5px rgba(0, 0, 0, 0.5);
-    "><i class="fas fa-trash"></i></button> --}}
-            </h3>
+            <h3><i class="fas fa-trash"></i> Trash Bin</h3>
             {{#each burgersData}}
             {{#if devoured}}
-            <div class="devouredburger-container">{{this.id}}. {{this.burger_name}}</div>
+            <div class="devouredburger-container">{{this.burger_name}} Owned by: <a href="/api/owner/{{this.SequelizeOwnerId}}">{{this.SequelizeOwner.owner_name}}</a></div>
             {{/if}}
             {{/each}}
         </div>
@@ -40,28 +37,33 @@ Create a button in index.handlebars that will submit the user input into the dat
     </div>
     <div class="row mt-4">
         <div class="col-3"></div>
-        <div class="col-6 text-center">
-            <form id="newOwner">
-                <label for="owner_name">Create Owner:</label>
-                <input placeholder="Enter your name" id="owner_name" type="text" />
-                <button type="submit">Create A New Owner</button>
-            </form>
-            <form id="newBurger">
-                <div class="form-group">
-                    <label for="owner_name">Select Owner:</label>
-                    <select class="custom-select" id="owner_select">
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="burgerInput">Burger type:</label>
-                    <textarea class="form-control pt-3 pl-3 pb-3" id="burgerInput" rows="1"
-                        placeholder="Enter a burger you want and click button below!"></textarea>
-                </div>
-                <div>
-                    <button type="submit">Make A New Burger!</button>
-                </div>
-                <div class="col-3"></div>
-            </form>
+        <div class="col-6">
+            <div class="p-5" id="checkout">
+                <h3 class="text-center"><i class="fas fa-dollar-sign"></i> Checkout Counter</h3>
+                <form id="newOwner" class="mt-4">
+                    <label for="owner_name">Create Owner:</label>
+                    <textarea class="form-control pt-3 pl-3 pb-3 mb-3" placeholder="Enter your name" id="owner_name" rows="1" type="text"></textarea>
+                    <div>
+                        <button class="btn-block" type="submit">Create A New Owner</button>
+                    </div>
+                </form>
+                <form id="newBurger" class="mt-4">
+                    <div class="form-group">
+                        <label for="owner_name">Select Owner:</label>
+                        <select class="custom-select" id="owner_select">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="burgerInput">Burger type:</label>
+                        <textarea class="form-control pt-3 pl-3 pb-3" id="burgerInput" rows="1"
+                            placeholder="Enter a burger you want and click button below!"></textarea>
+                    </div>
+                    <div>
+                        <button class="btn-block" type="submit">Order A New Burger!</button>
+                    </div>
+                    <div class="col-3"></div>
+                </form>
+            </div>
         </div>
     </div>
     <div class="row mt-5"></div>
@@ -71,10 +73,10 @@ Create a button in index.handlebars that will submit the user input into the dat
     <script type="text/javascript">
         //==========================Form Preparation=========================
         $(document).ready(function () {
-            getAuthors();
+            getOwners();
 
             // A function to get Authors and then render our list of Authors
-            function getAuthors() {
+            function getOwners() {
                 $.get("/owners", renderOwnerList);
             }
             // Function to either render a list of authors, or if there are none, direct the user to the page
@@ -152,18 +154,7 @@ Create a button in index.handlebars that will submit the user input into the dat
 
 
             })
-            function handleAuthorFormSubmit(event) {
-                // Don't do anything if the name fields hasn't been filled out
-                if (!nameInput.val().trim().trim()) {
-                    return;
-                }
-                // Calling the upsertAuthor function and passing in the value of the name input
-                upsertAuthor({
-                    name: nameInput
-                        .val()
-                        .trim()
-                });
-            }
+            
             // submit button for new burger
             $("#newBurger").on("submit", function (event) {
                 // console.log("making a new burger!")

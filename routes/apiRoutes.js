@@ -17,7 +17,7 @@ module.exports = function (app) {
             };
             console.log(burgers);
             //render in dom
-            res.render("index", burgers);
+            res.render("allOwner", burgers);
         });
     });
     // GET: get all the owners
@@ -31,6 +31,31 @@ module.exports = function (app) {
             if (err) res.status(500).end()
         })
     });
+
+    // GET: get a specific owner
+    app.get("/api/owner/:id", function (req, res) {
+        db.SequelizeOwners.findOne({
+            where:{
+                id: req.params.id
+            },
+            include: [{ model: db.SequelizeBurgers }]
+        }).then(function (data) {
+            console.log("================Here is the specific owner===================")
+            console.log(data);
+            console.log("================End===================")
+            var owner = {
+                ownerData: data
+            }
+            //render in dom
+            res.render("specificOwner", owner);
+            // //test
+            // res.json(data)
+        }).catch(function (err) {
+            if (err) res.status(500).end()
+        })
+    });
+
+
     // POST: get the request body of new owner and send to database
     app.post("/api/owner", function (req, res) {
         console.log(req.body)
